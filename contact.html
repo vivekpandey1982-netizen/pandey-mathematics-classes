@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Contact Us | Pandey Mathematics Classes, Rohtak</title>
+        <link rel="stylesheet" href="style.css">
+
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f3f7fc;
+            color: #26364a;
+        }
+
+        header {
+            background-color: #102a56;
+            color: white;
+            text-align: center;
+            padding: 30px 15px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        header p {
+            font-size: 17px;
+            margin-bottom: 0;
+        }
+
+        nav {
+            background-color: #183d73;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #ffd166;
+        }
+
+        .intro {
+            text-align: center;
+            padding: 35px 15px 15px;
+        }
+
+        .intro h2 {
+            color: #102a56;
+            font-size: 28px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 25px auto 50px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .contact-card h3 {
+            color: #102a56;
+            margin-top: 0;
+        }
+
+        .contact-card p {
+            line-height: 1.7;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 11px;
+            margin-top: 7px;
+            border: 1px solid #ccd5e0;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            background-color: #102a56;
+            color: white;
+            border: none;
+            padding: 13px 22px;
+            border-radius: 7px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #28558f;
+        }
+
+        .whatsapp-button {
+            display: inline-block;
+            background-color: #168b52;
+            color: white;
+            padding: 13px 20px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .map {
+            max-width: 910px;
+            margin: 0 auto 45px;
+            padding: 0 20px;
+        }
+
+        .map h2 {
+            color: #102a56;
+            text-align: center;
+        }
+
+        .map iframe {
+            width: 100%;
+            height: 350px;
+            border: 0;
+            border-radius: 12px;
+        }
+
+        footer {
+            background-color: #102a56;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 24px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 7px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Pandey Mathematics Classes</h1>
+        <p>From Basics to Brilliance | Rohtak</p>
+    </header>
+
+    <nav>
+    <a href="index-backup.html">Home</a>
+    <a href="courses.html">Courses</a>
+    <a href="faculty.html">Faculty</a>
+    <a href="contact.html">Contact</a>
+
+    </nav>
+
+    <section class="intro">
+        <h2>Contact Us</h2>
+        <p>Take the first step towards mathematical excellence.</p>
+    </section>
+
+    <section class="container">
+
+        <div class="contact-card">
+
+            <h3>Visit Our Institute</h3>
+
+            <p>
+                <strong>Address:</strong><br>
+                146 R, Model Town,<br>
+                Rohtak, Haryana
+            </p>
+
+            <p>
+                <strong>Admissions:</strong><br>
+                Contact us for batch details and admission enquiries.
+            </p>
+
+            <h3>WhatsApp Enquiry</h3>
+
+            <p>
+                Connect with us directly on WhatsApp.
+            </p>
+
+            <!-- Replace the number with your WhatsApp number -->
+            <a class="whatsapp-button"
+               href="https://wa.me/91XXXXXXXXXX"
+               target="_blank">
+                Enquire on WhatsApp
+            </a>
+
+        </div>
+
+
+        <div class="contact-card">
+
+            <h3>Admission Enquiry Form</h3>
+
+            <form id="enquiryForm">
+
+                <label>Student Name</label>
+                <input type="text" id="studentName"
+                       placeholder="Enter student name" required>
+
+                <label>Parent's Name</label>
+                <input type="text" id="parentName"
+                       placeholder="Enter parent's name" required>
+
+                <label>Mobile Number</label>
+                <input type="tel" id="mobile"
+                       placeholder="Enter mobile number"
+                       pattern="[0-9]{10}" required>
+
+                <label>Class</label>
+                <select id="studentClass" required>
+                    <option value="">Select Class</option>
+                    <option>Class 6</option>
+                    <option>Class 7</option>
+                    <option>Class 8</option>
+                    <option>Class 9</option>
+                    <option>Class 10</option>
+                    <option>Class 11</option>
+                    <option>Class 12</option>
+                </select>
+
+                <label>Message</label>
+                <textarea id="message"
+                          rows="4"
+                          placeholder="Your enquiry"></textarea>
+
+                <button type="submit">
+                    Submit Enquiry
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <section class="map">
+
+        <h2>Find Us on Google Maps</h2>
+
+        <iframe
+            src="https://www.google.com/maps?q=146+R+Model+Town+Rohtak+Haryana&output=embed"
+            loading="lazy">
+        </iframe>
+
+    </section>
+
+
+    <footer>
+        <p>Pandey Mathematics Classes, Rohtak</p>
+        <p>From Basics to Brilliance</p>
+        <p>© All Rights Reserved</p>
+    </footer>
+
+
+    <script>
+
+        document.getElementById("enquiryForm")
+        .addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const student = document.getElementById("studentName").value;
+            const parent = document.getElementById("parentName").value;
+            const mobile = document.getElementById("mobile").value;
+            const studentClass = document.getElementById("studentClass").value;
+            const message = document.getElementById("message").value;
+
+            const text =
+                "Admission Enquiry - Pandey Mathematics Classes\n\n" +
+                "Student Name: " + student + "\n" +
+                "Parent Name: " + parent + "\n" +
+                "Mobile: " + mobile + "\n" +
+                "Class: " + studentClass + "\n" +
+                "Message: " + message;
+
+            const whatsappNumber = "918930777797";
+
+            const url =
+                "https://wa.me/" + whatsappNumber +
+                "?text=" + encodeURIComponent(text);
+
+            window.open(url, "_blank");
+
+        });
+
+    </script>
+
+</body>
+</html>
