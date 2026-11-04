@@ -5,43 +5,219 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Pandey Mathematics Classes</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 950px;
+            margin: 25px auto;
+            padding: 15px;
+            background: #f3f7fc;
+            color: #102a56;
+        }
+
+        h1, h2 {
+            color: #102a56;
+        }
+
+        section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #d5deea;
+        }
+
+        input, select {
+            width: 100%;
+            max-width: 500px;
+            padding: 11px;
+            margin: 7px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 16px;
+            margin: 6px 5px 6px 0;
+            border: none;
+            border-radius: 5px;
+            background: #183d73;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .delete-button {
+            background: #b42318;
+        }
+
+        .edit-button {
+            background: #287a50;
+        }
+
+        .student-card, .resource-card {
+            border: 1px solid #cccccc;
+            padding: 14px;
+            margin: 12px 0;
+            border-radius: 6px;
+            background: #ffffff;
+            overflow-wrap: anywhere;
+        }
+
+        .resource-card a {
+            overflow-wrap: anywhere;
+        }
+
+        .message {
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+    </style>
 </head>
+
 <body>
 
     <h1>Pandey Mathematics Classes</h1>
     <h2>Admin Dashboard</h2>
 
+    <!-- ADMIN LOGIN -->
+
     <section id="loginSection">
         <h3>Admin Login</h3>
 
         <form id="adminLoginForm">
+
             <input type="email" id="adminEmail"
                    placeholder="Admin Email" required>
-            <br><br>
+
+            <br>
 
             <input type="password" id="adminPassword"
                    placeholder="Admin Password" required>
-            <br><br>
+
+            <br>
 
             <button type="submit">Login as Admin</button>
+
         </form>
 
-        <p id="loginMessage"></p>
+        <p id="loginMessage" class="message"></p>
     </section>
+
+
+    <!-- ADMIN DASHBOARD -->
 
     <section id="dashboardSection" hidden>
-        <h3>Registered Students</h3>
 
-        <button id="refreshButton">Refresh Student List</button>
+        <h2>Welcome, Admin</h2>
+
         <button id="logoutButton">Logout</button>
 
-        <p id="dashboardMessage"></p>
+        <hr>
+
+        <!-- STUDENT MANAGEMENT -->
+
+        <h2>Registered Students</h2>
+
+        <button id="refreshButton">Refresh Student List</button>
+
+        <p id="dashboardMessage" class="message"></p>
+
         <div id="studentList"></div>
+
+        <hr>
+
+        <!-- STUDY MATERIAL MANAGEMENT -->
+
+        <h2>Manage Study Materials</h2>
+
+        <p>Add PDFs, YouTube lessons or other learning resources for students.</p>
+
+        <form id="resourceForm">
+
+            <input type="hidden" id="resourceId">
+
+            <label for="targetClass"><strong>Select Class:</strong></label>
+
+            <select id="targetClass" required>
+                <option value="">Choose Class</option>
+                <option value="6">Class 6</option>
+                <option value="7">Class 7</option>
+                <option value="8">Class 8</option>
+                <option value="9">Class 9</option>
+                <option value="10">Class 10</option>
+                <option value="11">Class 11</option>
+                <option value="12">Class 12</option>
+                <option value="all">All Classes</option>
+            </select>
+
+            <br>
+
+            <label for="resourceTitle"><strong>Resource Title:</strong></label>
+
+            <input type="text" id="resourceTitle"
+                   placeholder="Example: Class 10 Mathematics Notes"
+                   required>
+
+            <br>
+
+            <label for="resourceType"><strong>Resource Type:</strong></label>
+
+            <select id="resourceType" required>
+                <option value="">Choose Type</option>
+                <option value="PDF">PDF</option>
+                <option value="Video">Video</option>
+            </select>
+
+            <br>
+
+            <label for="resourceUrl"><strong>Resource Link:</strong></label>
+
+            <input type="url" id="resourceUrl"
+                   placeholder="Paste Google Drive, iCloud or YouTube link"
+                   required>
+
+            <br>
+
+            <button type="submit" id="saveResourceButton">
+                Add Resource
+            </button>
+
+            <button type="button" id="cancelEditButton" hidden>
+                Cancel Edit
+            </button>
+
+        </form>
+
+        <p id="resourceMessage" class="message"></p>
+
+        <hr>
+
+        <h3>Existing Study Materials</h3>
+
+        <button id="refreshResourcesButton">
+            Refresh Materials
+        </button>
+
+        <div id="resourceList"></div>
+
     </section>
+
+
+    <!-- FIREBASE -->
 
     <script type="module">
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
 
         import {
             getAuth,
@@ -54,8 +230,14 @@
             collection,
             getDocs,
             doc,
-            updateDoc
+            updateDoc,
+            addDoc,
+            deleteDoc,
+            serverTimestamp
         } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
+
+        // FIREBASE CONFIGURATION
 
         const firebaseConfig = {
             apiKey: "AIzaSyB-iHtuA_hME0_uxezZij-_yeWPdi_kD04",
@@ -72,11 +254,21 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+
+        // HTML ELEMENTS
+
         const loginSection = document.getElementById("loginSection");
         const dashboardSection = document.getElementById("dashboardSection");
+
         const loginMessage = document.getElementById("loginMessage");
         const dashboardMessage = document.getElementById("dashboardMessage");
+
         const studentList = document.getElementById("studentList");
+        const resourceList = document.getElementById("resourceList");
+        const resourceMessage = document.getElementById("resourceMessage");
+
+        const resourceForm = document.getElementById("resourceForm");
+
 
         // ADMIN LOGIN
 
@@ -111,10 +303,12 @@
                 document.getElementById("adminLoginForm").reset();
 
                 await loadStudents();
+                await loadResources();
 
             } catch (error) {
 
                 console.error(error);
+
                 loginMessage.textContent =
                     "Login failed. Please check your email and password.";
 
@@ -122,11 +316,13 @@
 
         });
 
+
         // LOAD STUDENT RECORDS
 
         async function loadStudents() {
 
             studentList.replaceChildren();
+
             dashboardMessage.textContent = "Loading students...";
 
             try {
@@ -134,7 +330,10 @@
                 const snapshot = await getDocs(collection(db, "students"));
 
                 if (snapshot.empty) {
-                    dashboardMessage.textContent = "No students registered yet.";
+
+                    dashboardMessage.textContent =
+                        "No students registered yet.";
+
                     return;
                 }
 
@@ -146,9 +345,7 @@
                     const student = studentDoc.data();
 
                     const card = document.createElement("div");
-                    card.style.border = "1px solid #cccccc";
-                    card.style.padding = "12px";
-                    card.style.margin = "12px 0";
+                    card.className = "student-card";
 
                     const name = document.createElement("h3");
                     name.textContent = student.name || "Name not available";
@@ -157,10 +354,12 @@
                     email.textContent = "Email: " + (student.email || "");
 
                     const studentClass = document.createElement("p");
-                    studentClass.textContent = "Class: " + (student.class || "");
+                    studentClass.textContent =
+                        "Class: " + (student.class || "");
 
                     const status = document.createElement("p");
-                    status.textContent = "Status: " + (student.status || "Unknown");
+                    status.textContent =
+                        "Status: " + (student.status || "Unknown");
 
                     card.append(name, email, studentClass, status);
 
@@ -175,7 +374,8 @@
 
                         const rejectButton = document.createElement("button");
                         rejectButton.textContent = "Reject";
-                        rejectButton.style.marginLeft = "10px";
+
+                        rejectButton.style.background = "#b42318";
 
                         rejectButton.addEventListener("click", async () => {
                             await changeStatus(studentDoc.id, "rejected");
@@ -192,12 +392,14 @@
             } catch (error) {
 
                 console.error(error);
+
                 dashboardMessage.textContent =
-                    "Unable to load students. Please check your admin access.";
+                    "Unable to load students. Please check admin access.";
 
             }
 
         }
+
 
         // APPROVE OR REJECT STUDENT
 
@@ -217,6 +419,7 @@
             } catch (error) {
 
                 console.error(error);
+
                 dashboardMessage.textContent =
                     "Could not update student status.";
 
@@ -224,24 +427,293 @@
 
         }
 
-        // REFRESH STUDENT LIST
 
-        document.getElementById("refreshButton").addEventListener("click", loadStudents);
+        // ADD OR UPDATE STUDY MATERIAL
+
+        resourceForm.addEventListener("submit", async (e) => {
+
+            e.preventDefault();
+
+            const resourceId =
+                document.getElementById("resourceId").value;
+
+            const targetClass =
+                document.getElementById("targetClass").value;
+
+            const title =
+                document.getElementById("resourceTitle").value.trim();
+
+            const type =
+                document.getElementById("resourceType").value;
+
+            const url =
+                document.getElementById("resourceUrl").value.trim();
+
+            if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+
+                resourceMessage.textContent =
+                    "Admin login required.";
+
+                return;
+            }
+
+            const resourceData = {
+                title: title,
+                type: type,
+                url: url,
+                targetClass: targetClass
+            };
+
+            try {
+
+                resourceMessage.textContent = "Saving resource...";
+
+                if (resourceId) {
+
+                    await updateDoc(
+                        doc(db, "resources", resourceId),
+                        resourceData
+                    );
+
+                    resourceMessage.textContent =
+                        "Resource updated successfully.";
+
+                } else {
+
+                    await addDoc(collection(db, "resources"), {
+                        ...resourceData,
+                        createdAt: serverTimestamp()
+                    });
+
+                    resourceMessage.textContent =
+                        "New resource added successfully.";
+
+                }
+
+                resetResourceForm();
+
+                await loadResources();
+
+            } catch (error) {
+
+                console.error(error);
+
+                resourceMessage.textContent =
+                    "Unable to save resource. Please check Firestore rules and try again.";
+
+            }
+
+        });
+
+
+        // LOAD EXISTING STUDY MATERIALS
+
+        async function loadResources() {
+
+            resourceList.replaceChildren();
+
+            resourceMessage.textContent = "Loading study materials...";
+
+            try {
+
+                const snapshot = await getDocs(collection(db, "resources"));
+
+                if (snapshot.empty) {
+
+                    resourceMessage.textContent =
+                        "No study materials added yet.";
+
+                    return;
+                }
+
+                resourceMessage.textContent =
+                    "Total resources: " + snapshot.size;
+
+                snapshot.forEach((resourceDoc) => {
+
+                    const resource = resourceDoc.data();
+
+                    const card = document.createElement("div");
+                    card.className = "resource-card";
+
+                    const title = document.createElement("h3");
+                    title.textContent = resource.title || "Untitled resource";
+
+                    const details = document.createElement("p");
+                    details.textContent =
+                        "Class: " + (resource.targetClass === "all"
+                            ? "All Classes"
+                            : resource.targetClass)
+                        + " | Type: " + (resource.type || "");
+
+                    const link = document.createElement("a");
+                    link.href = resource.url || "#";
+                    link.textContent = "Open Resource";
+                    link.target = "_blank";
+                    link.rel = "noopener noreferrer";
+
+                    card.append(title, details, link);
+
+                    // EDIT BUTTON
+
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.className = "edit-button";
+
+                    editButton.addEventListener("click", () => {
+
+                        document.getElementById("resourceId").value =
+                            resourceDoc.id;
+
+                        document.getElementById("targetClass").value =
+                            resource.targetClass || "";
+
+                        document.getElementById("resourceTitle").value =
+                            resource.title || "";
+
+                        document.getElementById("resourceType").value =
+                            resource.type || "";
+
+                        document.getElementById("resourceUrl").value =
+                            resource.url || "";
+
+                        document.getElementById("saveResourceButton").textContent =
+                            "Update Resource";
+
+                        document.getElementById("cancelEditButton").hidden =
+                            false;
+
+                        resourceMessage.textContent =
+                            "Editing: " + (resource.title || "Resource");
+
+                        resourceForm.scrollIntoView({
+                            behavior: "smooth"
+                        });
+
+                    });
+
+
+                    // DELETE BUTTON
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.className = "delete-button";
+
+                    deleteButton.addEventListener("click", async () => {
+
+                        const confirmed = confirm(
+                            "Are you sure you want to delete this resource?"
+                        );
+
+                        if (!confirmed) {
+                            return;
+                        }
+
+                        try {
+
+                            await deleteDoc(
+                                doc(db, "resources", resourceDoc.id)
+                            );
+
+                            resourceMessage.textContent =
+                                "Resource deleted successfully.";
+
+                            if (
+                                document.getElementById("resourceId").value
+                                === resourceDoc.id
+                            ) {
+                                resetResourceForm();
+                            }
+
+                            await loadResources();
+
+                        } catch (error) {
+
+                            console.error(error);
+
+                            resourceMessage.textContent =
+                                "Unable to delete resource.";
+
+                        }
+
+                    });
+
+                    card.append(editButton, deleteButton);
+
+                    resourceList.appendChild(card);
+
+                });
+
+            } catch (error) {
+
+                console.error(error);
+
+                resourceMessage.textContent =
+                    "Unable to load resources. Please check your admin access.";
+
+            }
+
+        }
+
+
+        // RESET RESOURCE FORM
+
+        function resetResourceForm() {
+
+            resourceForm.reset();
+
+            document.getElementById("resourceId").value = "";
+
+            document.getElementById("saveResourceButton").textContent =
+                "Add Resource";
+
+            document.getElementById("cancelEditButton").hidden = true;
+
+        }
+
+
+        // CANCEL EDITING
+
+        document.getElementById("cancelEditButton")
+            .addEventListener("click", () => {
+
+                resetResourceForm();
+
+                resourceMessage.textContent = "Editing cancelled.";
+
+            });
+
+
+        // REFRESH BUTTONS
+
+        document.getElementById("refreshButton")
+            .addEventListener("click", loadStudents);
+
+        document.getElementById("refreshResourcesButton")
+            .addEventListener("click", loadResources);
+
 
         // ADMIN LOGOUT
 
-        document.getElementById("logoutButton").addEventListener("click", async () => {
+        document.getElementById("logoutButton")
+            .addEventListener("click", async () => {
 
-            await signOut(auth);
+                await signOut(auth);
 
-            dashboardSection.hidden = true;
-            loginSection.hidden = false;
+                dashboardSection.hidden = true;
+                loginSection.hidden = false;
 
-            studentList.replaceChildren();
-            dashboardMessage.textContent = "";
-            loginMessage.textContent = "You have logged out.";
+                studentList.replaceChildren();
+                resourceList.replaceChildren();
 
-        });
+                dashboardMessage.textContent = "";
+                resourceMessage.textContent = "";
+
+                resetResourceForm();
+
+                loginMessage.textContent = "You have logged out.";
+
+            });
 
     </script>
 

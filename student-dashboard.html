@@ -26,6 +26,7 @@
             margin: 10px 0;
             background: #f3f7fc;
             border-radius: 7px;
+            overflow-wrap: anywhere;
         }
 
         a {
@@ -36,6 +37,14 @@
         button {
             padding: 10px 18px;
             cursor: pointer;
+            background: #183d73;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        [hidden] {
+            display: none !important;
         }
     </style>
 </head>
@@ -52,7 +61,9 @@
     <div id="learningArea" hidden>
 
         <div class="section">
+
             <h3>My Class Resources</h3>
+
             <p id="classHeading"></p>
 
             <h4>PDF Notes and Worksheets</h4>
@@ -60,18 +71,26 @@
 
             <h4>Video Lessons</h4>
             <div id="videoResources"></div>
+
         </div>
 
         <div class="section">
+
             <h3>Common Learning Resources</h3>
             <div id="commonResources"></div>
+
         </div>
 
     </div>
 
+
     <script type="module">
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+        // FIREBASE IMPORTS
+
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
 
         import {
             getAuth,
@@ -82,8 +101,15 @@
         import {
             getFirestore,
             doc,
-            getDoc
+            getDoc,
+            collection,
+            query,
+            where,
+            getDocs
         } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
+
+        // FIREBASE CONFIGURATION
 
         const firebaseConfig = {
             apiKey: "AIzaSyB-iHtuA_hME0_uxezZij-_yeWPdi_kD04",
@@ -98,52 +124,32 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // CLASS-WISE STUDY MATERIALS
 
-        const resourcesByClass = {
+        // HTML ELEMENTS
 
-            "6": [],
+        const welcomeMessage =
+            document.getElementById("welcomeMessage");
 
-            "7": [],
+        const learningArea =
+            document.getElementById("learningArea");
 
-            "8": [],
+        const logoutButton =
+            document.getElementById("logoutButton");
 
-            "9": [],
 
-            "10": [
-    {
-        title: "Class 10 Mathematics Notes",
-        type: "PDF",
-        url: "https://drive.google.com/file/d/1zuwipiAzhSUWNoheyNWoKCqCLpNX191l/view?usp=drive_link"
-    },
-    {
-        title: "Class 10 Mathematics Video Lesson",
-        type: "Video",
-        url: "https://www.youtube.com/watch?v=5wJSCcZgBJM&t=11s"
-    }
-],
-
-            "11": [],
-
-            "12": []
-
-        };
-
-        // COMMON RESOURCES FOR ALL APPROVED STUDENTS
-
-        const commonResources = [];
-
-        const welcomeMessage = document.getElementById("welcomeMessage");
-        const learningArea = document.getElementById("learningArea");
-        const logoutButton = document.getElementById("logoutButton");
+        // DISPLAY RESOURCES
 
         function displayResources(containerId, resources) {
 
             const container = document.getElementById(containerId);
+
             container.replaceChildren();
 
-            if (!resources || resources.length === 0) {
-                container.textContent = "Study materials will be added soon.";
+            if (resources.length === 0) {
+
+                container.textContent =
+                    "Study materials will be added soon.";
+
                 return;
             }
 
@@ -153,65 +159,144 @@
                 item.className = "resource";
 
                 const link = document.createElement("a");
-                link.textContent = resource.title;
+
+                link.textContent =
+                    resource.title || "Untitled Resource";
+
                 link.href = resource.url;
                 link.target = "_blank";
                 link.rel = "noopener noreferrer";
 
                 const type = document.createElement("span");
-                type.textContent = " (" + resource.type + ")";
+
+                type.textContent =
+                    " (" + (resource.type || "Resource") + ")";
 
                 item.append(link, type);
+
                 container.appendChild(item);
 
             });
+
         }
 
-        // CHECK STUDENT LOGIN AND APPROVAL
+
+        // LOAD CLASS-SPECIFIC RESOURCES
+
+        async function loadClassResources(studentClass) {
+
+            const resourcesRef = collection(db, "resources");
+
+            const classQuery = query(
+                resourcesRef,
+                where("targetClass", "==", studentClass)
+            );
+
+            const snapshot = await getDocs(classQuery);
+
+            return snapshot.docs.map(resourceDoc => resourceDoc.data());
+
+        }
+
+
+        // LOAD COMMON RESOURCES
+
+        async function loadCommonResources() {
+
+            const resourcesRef = collection(db, "resources");
+
+            const commonQuery = query(
+                resourcesRef,
+                where("targetClass", "==", "all")
+            );
+
+            const snapshot = await getDocs(commonQuery);
+
+            return snapshot.docs.map(resourceDoc => resourceDoc.data());
+
+        }
+
+
+        // CHECK LOGIN AND STUDENT APPROVAL
 
         onAuthStateChanged(auth, async (user) => {
 
             if (!user) {
+
                 window.location.href = "student-login.html";
+
                 return;
             }
 
             try {
 
+                welcomeMessage.textContent =
+                    "Checking student approval...";
+
                 const studentRef = doc(db, "students", user.uid);
+
                 const studentSnapshot = await getDoc(studentRef);
 
                 if (!studentSnapshot.exists()) {
+
                     await signOut(auth);
+
                     window.location.href = "student-login.html";
+
                     return;
                 }
 
                 const student = studentSnapshot.data();
 
                 if (student.status !== "approved") {
+
                     await signOut(auth);
+
                     window.location.href = "student-login.html";
+
                     return;
                 }
+
+
+                // DISPLAY STUDENT DETAILS
 
                 welcomeMessage.textContent =
                     "Welcome, " + student.name + "!";
 
-                document.getElementById("classHeading").textContent =
-                    "Your Class: " + student.class;
+                const studentClass =
+                    String(student.class).trim();
 
-                const classResources =
-                    resourcesByClass[String(student.class).trim()] || [];
+                document.getElementById("classHeading").textContent =
+                    "Your Class: " + studentClass;
+
+
+                // FETCH FIRESTORE RESOURCES
+
+                welcomeMessage.textContent =
+                    "Welcome, " + student.name +
+                    "! Loading your study materials...";
+
+                const [classResources, commonResources] =
+                    await Promise.all([
+                        loadClassResources(studentClass),
+                        loadCommonResources()
+                    ]);
+
+
+                // SEPARATE PDF AND VIDEO RESOURCES
 
                 displayResources(
                     "pdfResources",
-                    classResources.filter(r => r.type === "PDF")
+                    classResources.filter(
+                        resource => resource.type === "PDF"
+                    )
                 );
 
                 displayResources(
                     "videoResources",
-                    classResources.filter(r => r.type === "Video")
+                    classResources.filter(
+                        resource => resource.type === "Video"
+                    )
                 );
 
                 displayResources(
@@ -219,25 +304,35 @@
                     commonResources
                 );
 
+
+                // SHOW DASHBOARD
+
                 learningArea.hidden = false;
+
                 logoutButton.hidden = false;
+
+                welcomeMessage.textContent =
+                    "Welcome, " + student.name + "!";
+
 
             } catch (error) {
 
-                console.error(error);
+                console.error("Dashboard error:", error);
 
                 welcomeMessage.textContent =
-                    "Unable to load your dashboard. Please try again.";
+                    "Unable to load your dashboard. Please refresh and try again.";
 
             }
 
         });
+
 
         // STUDENT LOGOUT
 
         logoutButton.addEventListener("click", async () => {
 
             await signOut(auth);
+
             window.location.href = "student-login.html";
 
         });
