@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Pandey Mathematics Classes</title>
+</head>
+<body>
+
+    <h1>Pandey Mathematics Classes</h1>
+    <h2>Admin Dashboard</h2>
+
+    <section id="loginSection">
+        <h3>Admin Login</h3>
+
+        <form id="adminLoginForm">
+            <input type="email" id="adminEmail"
+                   placeholder="Admin Email" required>
+            <br><br>
+
+            <input type="password" id="adminPassword"
+                   placeholder="Admin Password" required>
+            <br><br>
+
+            <button type="submit">Login as Admin</button>
+        </form>
+
+        <p id="loginMessage"></p>
+    </section>
+
+    <section id="dashboardSection" hidden>
+        <h3>Registered Students</h3>
+
+        <button id="refreshButton">Refresh Student List</button>
+        <button id="logoutButton">Logout</button>
+
+        <p id="dashboardMessage"></p>
+        <div id="studentList"></div>
+    </section>
+
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+
+        import {
+            getFirestore,
+            collection,
+            getDocs,
+            doc,
+            updateDoc
+        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-iHtuA_hME0_uxezZij-_yeWPdi_kD04",
+            authDomain: "pandey-mathematics-classes.firebaseapp.com",
+            projectId: "pandey-mathematics-classes",
+            storageBucket: "pandey-mathematics-classes.firebasestorage.app",
+            messagingSenderId: "523762241856",
+            appId: "1:523762241856:web:4402efc76a1f8463c66aa5"
+        };
+
+        const ADMIN_UID = "6Z7MBdLK3HT4HDlXGiCXmQFron42";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const loginSection = document.getElementById("loginSection");
+        const dashboardSection = document.getElementById("dashboardSection");
+        const loginMessage = document.getElementById("loginMessage");
+        const dashboardMessage = document.getElementById("dashboardMessage");
+        const studentList = document.getElementById("studentList");
+
+        // ADMIN LOGIN
+
+        document.getElementById("adminLoginForm").addEventListener("submit", async (e) => {
+
+            e.preventDefault();
+
+            const email = document.getElementById("adminEmail").value.trim();
+            const password = document.getElementById("adminPassword").value;
+
+            try {
+
+                loginMessage.textContent = "Checking admin account...";
+
+                const result = await signInWithEmailAndPassword(
+                    auth, email, password
+                );
+
+                if (result.user.uid !== ADMIN_UID) {
+
+                    await signOut(auth);
+
+                    loginMessage.textContent =
+                        "Access denied. This account is not an administrator.";
+
+                    return;
+                }
+
+                loginSection.hidden = true;
+                dashboardSection.hidden = false;
+
+                document.getElementById("adminLoginForm").reset();
+
+                await loadStudents();
+
+            } catch (error) {
+
+                console.error(error);
+                loginMessage.textContent =
+                    "Login failed. Please check your email and password.";
+
+            }
+
+        });
+
+        // LOAD STUDENT RECORDS
+
+        async function loadStudents() {
+
+            studentList.replaceChildren();
+            dashboardMessage.textContent = "Loading students...";
+
+            try {
+
+                const snapshot = await getDocs(collection(db, "students"));
+
+                if (snapshot.empty) {
+                    dashboardMessage.textContent = "No students registered yet.";
+                    return;
+                }
+
+                dashboardMessage.textContent =
+                    "Total registered students: " + snapshot.size;
+
+                snapshot.forEach((studentDoc) => {
+
+                    const student = studentDoc.data();
+
+                    const card = document.createElement("div");
+                    card.style.border = "1px solid #cccccc";
+                    card.style.padding = "12px";
+                    card.style.margin = "12px 0";
+
+                    const name = document.createElement("h3");
+                    name.textContent = student.name || "Name not available";
+
+                    const email = document.createElement("p");
+                    email.textContent = "Email: " + (student.email || "");
+
+                    const studentClass = document.createElement("p");
+                    studentClass.textContent = "Class: " + (student.class || "");
+
+                    const status = document.createElement("p");
+                    status.textContent = "Status: " + (student.status || "Unknown");
+
+                    card.append(name, email, studentClass, status);
+
+                    if (student.status === "pending") {
+
+                        const approveButton = document.createElement("button");
+                        approveButton.textContent = "Approve";
+
+                        approveButton.addEventListener("click", async () => {
+                            await changeStatus(studentDoc.id, "approved");
+                        });
+
+                        const rejectButton = document.createElement("button");
+                        rejectButton.textContent = "Reject";
+                        rejectButton.style.marginLeft = "10px";
+
+                        rejectButton.addEventListener("click", async () => {
+                            await changeStatus(studentDoc.id, "rejected");
+                        });
+
+                        card.append(approveButton, rejectButton);
+
+                    }
+
+                    studentList.appendChild(card);
+
+                });
+
+            } catch (error) {
+
+                console.error(error);
+                dashboardMessage.textContent =
+                    "Unable to load students. Please check your admin access.";
+
+            }
+
+        }
+
+        // APPROVE OR REJECT STUDENT
+
+        async function changeStatus(studentId, newStatus) {
+
+            try {
+
+                await updateDoc(doc(db, "students", studentId), {
+                    status: newStatus
+                });
+
+                dashboardMessage.textContent =
+                    "Student status updated successfully.";
+
+                await loadStudents();
+
+            } catch (error) {
+
+                console.error(error);
+                dashboardMessage.textContent =
+                    "Could not update student status.";
+
+            }
+
+        }
+
+        // REFRESH STUDENT LIST
+
+        document.getElementById("refreshButton").addEventListener("click", loadStudents);
+
+        // ADMIN LOGOUT
+
+        document.getElementById("logoutButton").addEventListener("click", async () => {
+
+            await signOut(auth);
+
+            dashboardSection.hidden = true;
+            loginSection.hidden = false;
+
+            studentList.replaceChildren();
+            dashboardMessage.textContent = "";
+            loginMessage.textContent = "You have logged out.";
+
+        });
+
+    </script>
+
+</body>
+</html>

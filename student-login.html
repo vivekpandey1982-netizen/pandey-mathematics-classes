@@ -10,42 +10,65 @@
 
     <h1>Pandey Mathematics Classes</h1>
     <h2>Student Portal</h2>
+
     <h3>Student Registration</h3>
 
-<form id="registerForm">
-    <input type="text" id="studentName" placeholder="Full Name" required>
-    <br><br>
+    <form id="registerForm">
+        <input type="text" id="studentName" placeholder="Full Name" required>
+        <br><br>
 
-    <input type="email" id="studentEmail" placeholder="Email Address" required>
-    <br><br>
+        <input type="email" id="studentEmail" placeholder="Email Address" required>
+        <br><br>
 
-    <input type="text" id="studentClass" placeholder="Class (e.g. 10)" required>
-    <br><br>
+        <input type="text" id="studentClass" placeholder="Class (e.g. 10)" required>
+        <br><br>
 
-    <input type="password" id="studentPassword" placeholder="Create Password" required>
-    <br><br>
+        <input type="password" id="studentPassword" placeholder="Create Password" required>
+        <br><br>
 
-    <button type="submit">Register</button>
-</form>
+        <button type="submit">Register</button>
+    </form>
 
-<p id="message"></p>
+    <p id="message"></p>
+
+    <hr>
+
+    <h3>Student Login</h3>
+
+    <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email Address" required>
+        <br><br>
+
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <br><br>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p id="loginMessage"></p>
+
     <p>Welcome! Your online learning journey starts here.</p>
 
     <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
 
-import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    updateProfile
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
 
-} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
-import {
-    getFirestore,
-    doc,
-    setDoc,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            updateProfile,
+            signInWithEmailAndPassword,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+
+        import {
+            getFirestore,
+            doc,
+            setDoc,
+            getDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyB-iHtuA_hME0_uxezZij-_yeWPdi_kD04",
             authDomain: "pandey-mathematics-classes.firebaseapp.com",
@@ -57,49 +80,121 @@ import {
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-const db = getFirestore(app);
-        console.log("Firebase connected successfully!");
+        const db = getFirestore(app);
+
+        // STUDENT REGISTRATION
+
         document.getElementById("registerForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
 
-    const name = document.getElementById("studentName").value.trim();
-    const email = document.getElementById("studentEmail").value.trim();
-    const studentClass = document.getElementById("studentClass").value.trim();
-    const password = document.getElementById("studentPassword").value;
+            e.preventDefault();
 
-    const message = document.getElementById("message");
+            const name = document.getElementById("studentName").value.trim();
+            const email = document.getElementById("studentEmail").value.trim();
+            const studentClass = document.getElementById("studentClass").value.trim();
+            const password = document.getElementById("studentPassword").value;
 
-    try {
-        message.textContent = "Registering...";
+            const message = document.getElementById("message");
 
-        const userCredential = await createUserWithEmailAndPassword(
-            auth, email, password
-        );
+            try {
 
-        const user = userCredential.user;
+                message.textContent = "Registering...";
 
-        await updateProfile(user, {
-            displayName: name
+                const userCredential = await createUserWithEmailAndPassword(
+                    auth, email, password
+                );
+
+                const user = userCredential.user;
+
+                await updateProfile(user, {
+                    displayName: name
+                });
+
+                await setDoc(doc(db, "students", user.uid), {
+                    name: name,
+                    email: email,
+                    class: studentClass,
+                    status: "pending",
+                    createdAt: serverTimestamp()
+                });
+
+                await signOut(auth);
+
+                message.textContent =
+                    "Registration successful! Your account is awaiting admin approval.";
+
+                document.getElementById("registerForm").reset();
+
+            } catch (error) {
+
+                console.error(error);
+                message.textContent = "Registration failed: " + error.message;
+
+            }
+
         });
 
-        await setDoc(doc(db, "students", user.uid), {
-            name: name,
-            email: email,
-            class: studentClass,
-            status: "pending",
-            createdAt: serverTimestamp()
+        // STUDENT LOGIN
+
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+
+            e.preventDefault();
+
+            const email = document.getElementById("loginEmail").value.trim();
+            const password = document.getElementById("loginPassword").value;
+
+            const loginMessage = document.getElementById("loginMessage");
+
+            try {
+
+                loginMessage.textContent = "Logging in...";
+
+                const userCredential = await signInWithEmailAndPassword(
+                    auth, email, password
+                );
+
+                const user = userCredential.user;
+
+                const studentRef = doc(db, "students", user.uid);
+                const studentSnapshot = await getDoc(studentRef);
+
+                if (!studentSnapshot.exists()) {
+
+                    await signOut(auth);
+
+                    loginMessage.textContent =
+                        "Student profile not found. Please contact the institute.";
+
+                    return;
+                }
+
+                const studentData = studentSnapshot.data();
+
+                if (studentData.status !== "approved") {
+
+                    await signOut(auth);
+
+                    loginMessage.textContent =
+                        "Your registration is awaiting admin approval.";
+
+                    return;
+                }
+
+                document.getElementById("loginForm").reset();
+
+                // Redirect approved students to their dashboard.
+                window.location.href = "student-dashboard.html";
+
+            } catch (error) {
+
+                console.error(error);
+
+                loginMessage.textContent =
+                    "Login failed. Please check your email and password.";
+
+            }
+
         });
 
-        message.textContent =
-            "Registration successful! Your account is awaiting admin approval.";
-
-        document.getElementById("registerForm").reset();
-
-    } catch (error) {
-        console.error(error);
-        message.textContent = "Registration failed: " + error.message;
-    }
-});
     </script>
 
 </body>
