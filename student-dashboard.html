@@ -4,340 +4,785 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Student Dashboard | Pandey Mathematics Classes</title>
 
     <style>
+        :root {
+            --navy: #102a56;
+            --blue: #183d73;
+            --light: #f3f7fc;
+            --border: #dbe4f0;
+            --muted: #64748b;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            margin: 25px;
-            background: #f3f7fc;
-            color: #102a56;
+            margin: 0;
+            background: var(--light);
+            color: var(--navy);
+        }
+
+        .page {
+            max-width: 1200px;
+            margin: auto;
+            padding: 22px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #102a56, #24528b);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .hero p {
+            margin: 5px 0;
+            color: #dbeafe;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        button {
+            padding: 11px 18px;
+            cursor: pointer;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            opacity: 0.88;
+        }
+
+        .logout-button {
+            background: white;
+            color: var(--navy);
+        }
+
+        .welcome {
+            background: white;
+            padding: 18px 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 1px solid var(--border);
+        }
+
+        .welcome h2 {
+            margin: 0 0 7px;
+        }
+
+        .welcome p {
+            margin: 0;
+            color: var(--muted);
         }
 
         .section {
             background: white;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 10px;
+            padding: 22px;
+            margin: 22px 0;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            box-shadow: 0 5px 18px rgba(16, 42, 86, 0.04);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .section-intro {
+            color: var(--muted);
+            margin-top: 0;
+            line-height: 1.5;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+            margin-top: 20px;
+        }
+
+        .category-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            background: #ffffff;
+            min-width: 0;
+        }
+
+        .category-card h3 {
+            color: var(--navy);
+            font-size: 17px;
+            margin: 0 0 14px;
+            line-height: 1.4;
         }
 
         .resource {
-            padding: 12px;
+            padding: 13px;
             margin: 10px 0;
-            background: #f3f7fc;
-            border-radius: 7px;
+            background: var(--light);
+            border-radius: 9px;
+            border: 1px solid #e6edf6;
             overflow-wrap: anywhere;
         }
 
-        a {
-            color: #183d73;
-            font-weight: bold;
+        .resource:last-child {
+            margin-bottom: 0;
         }
 
-        button {
-            padding: 10px 18px;
-            cursor: pointer;
-            background: #183d73;
-            color: white;
-            border: none;
-            border-radius: 5px;
+        .resource a {
+            color: var(--blue);
+            font-weight: bold;
+            text-decoration: none;
+            line-height: 1.5;
+        }
+
+        .resource a:hover {
+            text-decoration: underline;
+        }
+
+        .resource-meta {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 7px;
+            line-height: 1.5;
+        }
+
+        .resource-description {
+            color: #334155;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 8px 0 0;
+        }
+
+        .empty-message {
+            color: var(--muted);
+            background: var(--light);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .format-label {
+            display: inline-block;
+            background: #eaf1fb;
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 20px;
+            margin-left: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            padding: 20px 10px;
+            font-size: 13px;
         }
 
         [hidden] {
             display: none !important;
+        }
+
+        @media (max-width: 700px) {
+            .page {
+                padding: 12px;
+            }
+
+            .hero {
+                padding: 22px;
+            }
+
+            .hero h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 16px;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <h1>Pandey Mathematics Classes</h1>
-    <h2>Student Learning Dashboard</h2>
+<div class="page">
 
-    <p id="welcomeMessage">Checking your account...</p>
+    <!-- HEADER -->
 
-    <button id="logoutButton" hidden>Logout</button>
+    <header class="hero">
 
-    <div id="learningArea" hidden>
+        <div class="top-bar">
 
-        <div class="section">
+            <div>
+                <h1>Pandey Mathematics Classes</h1>
+                <p>From Basics to Brilliance</p>
+                <p>Digital Learning Campus</p>
+            </div>
 
-            <h3>My Class Resources</h3>
-
-            <p id="classHeading"></p>
-
-            <h4>PDF Notes and Worksheets</h4>
-            <div id="pdfResources"></div>
-
-            <h4>Video Lessons</h4>
-            <div id="videoResources"></div>
+            <button id="logoutButton" class="logout-button" hidden>
+                Logout
+            </button>
 
         </div>
 
-        <div class="section">
+    </header>
 
-            <h3>Common Learning Resources</h3>
-            <div id="commonResources"></div>
 
-        </div>
+    <!-- WELCOME MESSAGE -->
+
+    <div class="welcome">
+
+        <h2 id="welcomeMessage">Checking your account...</h2>
+
+        <p id="classHeading"></p>
 
     </div>
 
 
-    <script type="module">
+    <!-- LEARNING AREA -->
 
-        // FIREBASE IMPORTS
+    <main id="learningArea" hidden>
 
-        import {
-            initializeApp
-        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+        <!-- CLASS RESOURCES -->
 
-        import {
-            getAuth,
-            onAuthStateChanged,
-            signOut
-        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+        <section class="section">
 
-        import {
-            getFirestore,
-            doc,
-            getDoc,
-            collection,
-            query,
-            where,
-            getDocs
-        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+            <h2>My Learning Campus</h2>
+
+            <p class="section-intro">
+                Explore your learning materials, practise mathematics
+                and strengthen your concepts. Select any available
+                resource to begin learning.
+            </p>
+
+            <div id="classCategoryGrid" class="category-grid"></div>
+
+        </section>
 
 
-        // FIREBASE CONFIGURATION
+        <!-- COMMON RESOURCES -->
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyB-iHtuA_hME0_uxezZij-_yeWPdi_kD04",
-            authDomain: "pandey-mathematics-classes.firebaseapp.com",
-            projectId: "pandey-mathematics-classes",
-            storageBucket: "pandey-mathematics-classes.firebasestorage.app",
-            messagingSenderId: "523762241856",
-            appId: "1:523762241856:web:4402efc76a1f8463c66aa5"
-        };
+        <section class="section">
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+            <h2>Common Learning Resources</h2>
 
+            <p class="section-intro">
+                Learning materials and activities shared with students
+                of all classes.
+            </p>
 
-        // HTML ELEMENTS
+            <div id="commonCategoryGrid" class="category-grid"></div>
 
-        const welcomeMessage =
-            document.getElementById("welcomeMessage");
+        </section>
 
-        const learningArea =
-            document.getElementById("learningArea");
-
-        const logoutButton =
-            document.getElementById("logoutButton");
+    </main>
 
 
-        // DISPLAY RESOURCES
+    <!-- FOOTER -->
 
-        function displayResources(containerId, resources) {
+    <footer class="footer">
+        © Pandey Mathematics Classes, Rohtak
+        <br>
+        From Basics to Brilliance
+    </footer>
 
-            const container = document.getElementById(containerId);
+</div>
 
-            container.replaceChildren();
 
-            if (resources.length === 0) {
+<script type="module">
 
-                container.textContent =
-                    "Study materials will be added soon.";
+    // FIREBASE IMPORTS
 
-                return;
-            }
+    import {
+        initializeApp
+    } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
 
-            resources.forEach(resource => {
+    import {
+        getAuth,
+        onAuthStateChanged,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
 
-                const item = document.createElement("div");
-                item.className = "resource";
+    import {
+        getFirestore,
+        doc,
+        getDoc,
+        collection,
+        query,
+        where,
+        getDocs
+    } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
-                const link = document.createElement("a");
 
-                link.textContent =
-                    resource.title || "Untitled Resource";
+    // FIREBASE CONFIGURATION
 
-                link.href = resource.url;
+    const firebaseConfig = {
+        apiKey: "AIzaSyB-iHtuA_hME0_uxezZij-_yeWPdi_kD04",
+        authDomain: "pandey-mathematics-classes.firebaseapp.com",
+        projectId: "pandey-mathematics-classes",
+        storageBucket: "pandey-mathematics-classes.firebasestorage.app",
+        messagingSenderId: "523762241856",
+        appId: "1:523762241856:web:4402efc76a1f8463c66aa5"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+
+    // HTML ELEMENTS
+
+    const welcomeMessage =
+        document.getElementById("welcomeMessage");
+
+    const classHeading =
+        document.getElementById("classHeading");
+
+    const learningArea =
+        document.getElementById("learningArea");
+
+    const logoutButton =
+        document.getElementById("logoutButton");
+
+
+    // LEARNING CATEGORIES
+
+    // Keep these names consistent with the Admin Dashboard.
+
+    const categories = [
+
+        "Class Notes",
+
+        "Practice Worksheets",
+
+        "Tests and Assignments",
+
+        "Previous Year Papers",
+
+        "Video Lectures",
+
+        "Formula and Revision Bank",
+
+        "Olympiad and Advanced Mathematics",
+
+        "Problem Lab",
+
+        "Exam Strategy and Preparation",
+
+        "Mathematics in Real Life",
+
+        "Mathematical History",
+
+        "Interactive Mathematics",
+
+        "Mathematics Dictionary",
+
+        "Other Resources"
+
+    ];
+
+
+    // LOAD CLASS-SPECIFIC RESOURCES
+
+    async function loadClassResources(studentClass) {
+
+        const resourcesRef = collection(db, "resources");
+
+        const classQuery = query(
+            resourcesRef,
+            where("targetClass", "==", studentClass)
+        );
+
+        const snapshot = await getDocs(classQuery);
+
+        return snapshot.docs.map(resourceDoc => ({
+            id: resourceDoc.id,
+            ...resourceDoc.data()
+        }));
+
+    }
+
+
+    // LOAD COMMON RESOURCES
+
+    async function loadCommonResources() {
+
+        const resourcesRef = collection(db, "resources");
+
+        const commonQuery = query(
+            resourcesRef,
+            where("targetClass", "==", "all")
+        );
+
+        const snapshot = await getDocs(commonQuery);
+
+        return snapshot.docs.map(resourceDoc => ({
+            id: resourceDoc.id,
+            ...resourceDoc.data()
+        }));
+
+    }
+
+
+    // CREATE RESOURCE CARD
+
+    function createResourceCard(resource) {
+
+        const item = document.createElement("div");
+
+        item.className = "resource";
+
+
+        // RESOURCE TITLE AND LINK
+
+        const link = document.createElement("a");
+
+        link.textContent =
+            resource.title || "Untitled Resource";
+
+
+        // Allow only normal web links.
+
+        try {
+
+            const resourceURL = new URL(resource.url);
+
+            if (
+                resourceURL.protocol === "https:" ||
+                resourceURL.protocol === "http:"
+            ) {
+
+                link.href = resourceURL.href;
                 link.target = "_blank";
                 link.rel = "noopener noreferrer";
 
-                const type = document.createElement("span");
+            } else {
 
-                type.textContent =
-                    " (" + (resource.type || "Resource") + ")";
+                link.textContent += " (Invalid resource link)";
 
-                item.append(link, type);
+            }
 
-                container.appendChild(item);
+        } catch {
+
+            link.textContent += " (Invalid resource link)";
+
+        }
+
+
+        // RESOURCE FORMAT
+
+        const format = document.createElement("span");
+
+        format.className = "format-label";
+
+        format.textContent =
+            resource.type || "Resource";
+
+
+        const titleRow = document.createElement("div");
+
+        titleRow.append(link, format);
+
+        item.appendChild(titleRow);
+
+
+        // CHAPTER AND DIFFICULTY
+
+        const metadata = [];
+
+        if (resource.chapter) {
+
+            metadata.push("Chapter: " + resource.chapter);
+
+        }
+
+        if (resource.difficulty) {
+
+            metadata.push("Level: " + resource.difficulty);
+
+        }
+
+
+        if (metadata.length > 0) {
+
+            const meta = document.createElement("div");
+
+            meta.className = "resource-meta";
+
+            meta.textContent = metadata.join(" | ");
+
+            item.appendChild(meta);
+
+        }
+
+
+        // DESCRIPTION
+
+        if (resource.description) {
+
+            const description = document.createElement("p");
+
+            description.className = "resource-description";
+
+            description.textContent = resource.description;
+
+            item.appendChild(description);
+
+        }
+
+
+        return item;
+
+    }
+
+
+    // DISPLAY ALL CATEGORIES
+
+    function displayCategories(containerId, resources) {
+
+        const container =
+            document.getElementById(containerId);
+
+        container.replaceChildren();
+
+
+        // Create one card for every category.
+
+        categories.forEach(categoryName => {
+
+            const card = document.createElement("div");
+
+            card.className = "category-card";
+
+
+            const heading = document.createElement("h3");
+
+            heading.textContent = categoryName;
+
+            card.appendChild(heading);
+
+
+            // Find resources belonging to this category.
+
+            // Old resources without a category go to Other Resources.
+
+            const categoryResources = resources.filter(resource => {
+
+                const resourceCategory =
+                    resource.category || "Other Resources";
+
+                return resourceCategory === categoryName;
 
             });
 
+
+            if (categoryResources.length === 0) {
+
+                const emptyMessage =
+                    document.createElement("p");
+
+                emptyMessage.className = "empty-message";
+
+                emptyMessage.textContent =
+                    "New resources coming soon.";
+
+                card.appendChild(emptyMessage);
+
+            } else {
+
+                categoryResources.forEach(resource => {
+
+                    card.appendChild(
+                        createResourceCard(resource)
+                    );
+
+                });
+
+            }
+
+
+            container.appendChild(card);
+
+        });
+
+    }
+
+
+    // CHECK LOGIN AND STUDENT APPROVAL
+
+    onAuthStateChanged(auth, async (user) => {
+
+        if (!user) {
+
+            window.location.href = "student-login.html";
+
+            return;
         }
 
 
-        // LOAD CLASS-SPECIFIC RESOURCES
+        try {
 
-        async function loadClassResources(studentClass) {
-
-            const resourcesRef = collection(db, "resources");
-
-            const classQuery = query(
-                resourcesRef,
-                where("targetClass", "==", studentClass)
-            );
-
-            const snapshot = await getDocs(classQuery);
-
-            return snapshot.docs.map(resourceDoc => resourceDoc.data());
-
-        }
+            welcomeMessage.textContent =
+                "Checking student approval...";
 
 
-        // LOAD COMMON RESOURCES
+            const studentRef =
+                doc(db, "students", user.uid);
 
-        async function loadCommonResources() {
-
-            const resourcesRef = collection(db, "resources");
-
-            const commonQuery = query(
-                resourcesRef,
-                where("targetClass", "==", "all")
-            );
-
-            const snapshot = await getDocs(commonQuery);
-
-            return snapshot.docs.map(resourceDoc => resourceDoc.data());
-
-        }
+            const studentSnapshot =
+                await getDoc(studentRef);
 
 
-        // CHECK LOGIN AND STUDENT APPROVAL
+            if (!studentSnapshot.exists()) {
 
-        onAuthStateChanged(auth, async (user) => {
-
-            if (!user) {
+                await signOut(auth);
 
                 window.location.href = "student-login.html";
 
                 return;
             }
 
-            try {
 
-                welcomeMessage.textContent =
-                    "Checking student approval...";
-
-                const studentRef = doc(db, "students", user.uid);
-
-                const studentSnapshot = await getDoc(studentRef);
-
-                if (!studentSnapshot.exists()) {
-
-                    await signOut(auth);
-
-                    window.location.href = "student-login.html";
-
-                    return;
-                }
-
-                const student = studentSnapshot.data();
-
-                if (student.status !== "approved") {
-
-                    await signOut(auth);
-
-                    window.location.href = "student-login.html";
-
-                    return;
-                }
+            const student = studentSnapshot.data();
 
 
-                // DISPLAY STUDENT DETAILS
+            // ONLY APPROVED STUDENTS CAN CONTINUE.
 
-                welcomeMessage.textContent =
-                    "Welcome, " + student.name + "!";
+            if (student.status !== "approved") {
 
-                const studentClass =
-                    String(student.class).trim();
+                await signOut(auth);
 
-                document.getElementById("classHeading").textContent =
-                    "Your Class: " + studentClass;
+                window.location.href = "student-login.html";
 
-
-                // FETCH FIRESTORE RESOURCES
-
-                welcomeMessage.textContent =
-                    "Welcome, " + student.name +
-                    "! Loading your study materials...";
-
-                const [classResources, commonResources] =
-                    await Promise.all([
-                        loadClassResources(studentClass),
-                        loadCommonResources()
-                    ]);
-
-
-                // SEPARATE PDF AND VIDEO RESOURCES
-
-                displayResources(
-                    "pdfResources",
-                    classResources.filter(
-                        resource => resource.type === "PDF"
-                    )
-                );
-
-                displayResources(
-                    "videoResources",
-                    classResources.filter(
-                        resource => resource.type === "Video"
-                    )
-                );
-
-                displayResources(
-                    "commonResources",
-                    commonResources
-                );
-
-
-                // SHOW DASHBOARD
-
-                learningArea.hidden = false;
-
-                logoutButton.hidden = false;
-
-                welcomeMessage.textContent =
-                    "Welcome, " + student.name + "!";
-
-
-            } catch (error) {
-
-                console.error("Dashboard error:", error);
-
-                welcomeMessage.textContent =
-                    "Unable to load your dashboard. Please refresh and try again.";
-
+                return;
             }
 
-        });
+
+            // STUDENT DETAILS
+
+            const studentClass =
+                String(student.class).trim();
 
 
-        // STUDENT LOGOUT
+            welcomeMessage.textContent =
+                "Welcome, " + student.name + "!";
 
-        logoutButton.addEventListener("click", async () => {
+
+            classHeading.textContent =
+                "Your Class: " + studentClass;
+
+
+            welcomeMessage.textContent =
+                "Welcome, " + student.name +
+                "! Loading your learning campus...";
+
+
+            // FETCH CLASS AND COMMON RESOURCES.
+
+            // These separate queries preserve compatibility
+            // with the existing Firestore security rules.
+
+            const [
+                classResources,
+                commonResources
+            ] = await Promise.all([
+
+                loadClassResources(studentClass),
+
+                loadCommonResources()
+
+            ]);
+
+
+            // DISPLAY ALL CATEGORIES.
+
+            displayCategories(
+                "classCategoryGrid",
+                classResources
+            );
+
+
+            displayCategories(
+                "commonCategoryGrid",
+                commonResources
+            );
+
+
+            // SHOW DASHBOARD.
+
+            learningArea.hidden = false;
+
+            logoutButton.hidden = false;
+
+
+            welcomeMessage.textContent =
+                "Welcome, " + student.name + "!";
+
+
+        } catch (error) {
+
+            console.error("Dashboard error:", error);
+
+            welcomeMessage.textContent =
+                "Unable to load your dashboard. Please refresh and try again.";
+
+        }
+
+    });
+
+
+    // STUDENT LOGOUT
+
+    logoutButton.addEventListener("click", async () => {
+
+        try {
 
             await signOut(auth);
 
             window.location.href = "student-login.html";
 
-        });
+        } catch (error) {
 
-    </script>
+            console.error("Logout error:", error);
+
+            welcomeMessage.textContent =
+                "Unable to log out. Please try again.";
+
+        }
+
+    });
+
+</script>
 
 </body>
 </html>

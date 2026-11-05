@@ -7,715 +7,863 @@
     <title>Admin Dashboard | Pandey Mathematics Classes</title>
 
     <style>
+        :root {
+            --navy: #102a56;
+            --blue: #183d73;
+            --light: #f3f7fc;
+            --border: #dbe4f0;
+            --muted: #64748b;
+            --green: #287a50;
+            --red: #b42318;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
             font-family: Arial, sans-serif;
-            max-width: 950px;
-            margin: 25px auto;
-            padding: 15px;
-            background: #f3f7fc;
-            color: #102a56;
+            margin: 0;
+            padding: 24px;
+            background: var(--light);
+            color: var(--navy);
         }
 
-        h1, h2 {
-            color: #102a56;
+        .page { max-width: 1100px; margin: 0 auto; }
+
+        header {
+            background: linear-gradient(135deg, #102a56, #24528b);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 22px;
         }
 
-        section {
+        header h1 { margin: 0 0 7px; font-size: 25px; }
+        header p { margin: 0; color: #dbeafe; }
+
+        section.panel {
             background: white;
-            padding: 20px;
+            padding: 22px;
             margin: 20px 0;
-            border-radius: 8px;
-            border: 1px solid #d5deea;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            box-shadow: 0 5px 18px rgba(16, 42, 86, 0.05);
         }
 
-        input, select {
+        h2 { margin-top: 0; color: var(--navy); }
+        h3 { color: var(--navy); }
+
+        input, select, textarea {
+            display: block;
             width: 100%;
-            max-width: 500px;
-            padding: 11px;
-            margin: 7px 0;
-            box-sizing: border-box;
+            max-width: 650px;
+            padding: 12px;
+            margin: 7px 0 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font: inherit;
+            background: white;
+            color: #172554;
+        }
+
+        textarea { min-height: 85px; resize: vertical; }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 5px;
         }
 
         button {
-            padding: 10px 16px;
-            margin: 6px 5px 6px 0;
+            padding: 11px 17px;
+            margin: 5px 6px 5px 0;
             border: none;
-            border-radius: 5px;
-            background: #183d73;
+            border-radius: 8px;
+            background: var(--blue);
             color: white;
+            font-weight: bold;
             cursor: pointer;
         }
 
-        button:hover {
-            opacity: 0.85;
-        }
-
-        .delete-button {
-            background: #b42318;
-        }
-
-        .edit-button {
-            background: #287a50;
-        }
+        button:hover { opacity: 0.88; }
+        button:disabled { opacity: 0.55; cursor: wait; }
+        .delete-button { background: var(--red); }
+        .edit-button { background: var(--green); }
+        .secondary-button { background: #64748b; }
 
         .student-card, .resource-card {
-            border: 1px solid #cccccc;
-            padding: 14px;
+            border: 1px solid var(--border);
+            padding: 16px;
             margin: 12px 0;
-            border-radius: 6px;
-            background: #ffffff;
+            border-radius: 10px;
+            background: #fff;
             overflow-wrap: anywhere;
         }
 
-        .resource-card a {
-            overflow-wrap: anywhere;
+        .resource-card h3, .student-card h3 { margin: 0 0 9px; }
+        .resource-meta { color: var(--muted); font-size: 14px; line-height: 1.6; }
+        .message { margin-top: 12px; font-weight: bold; }
+        .hint { color: var(--muted); font-size: 13px; margin-top: -10px; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0 18px;
+            max-width: 1000px;
         }
 
-        .message {
-            margin-top: 12px;
-            font-weight: bold;
+        .form-grid > div { min-width: 0; }
+        .full-width { grid-column: 1 / -1; }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        [hidden] {
-            display: none !important;
+        hr { border: 0; border-top: 1px solid var(--border); margin: 25px 0; }
+        [hidden] { display: none !important; }
+
+        @media (max-width: 650px) {
+            body { padding: 12px; }
+            header, section.panel { padding: 17px; }
+            header h1 { font-size: 21px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: auto; }
         }
     </style>
 </head>
 
 <body>
+<div class="page">
 
-    <h1>Pandey Mathematics Classes</h1>
-    <h2>Admin Dashboard</h2>
+    <header>
+        <h1>Pandey Mathematics Classes</h1>
+        <p>Administrator Workspace · Student Learning Portal</p>
+    </header>
 
-    <!-- ADMIN LOGIN -->
-
-    <section id="loginSection">
-        <h3>Admin Login</h3>
+    <section class="panel" id="loginSection">
+        <h2>Admin Login</h2>
 
         <form id="adminLoginForm">
+            <label for="adminEmail">Admin Email</label>
+            <input type="email" id="adminEmail" placeholder="Admin Email" required>
 
-            <input type="email" id="adminEmail"
-                   placeholder="Admin Email" required>
-
-            <br>
-
-            <input type="password" id="adminPassword"
-                   placeholder="Admin Password" required>
-
-            <br>
+            <label for="adminPassword">Password</label>
+            <input type="password" id="adminPassword" placeholder="Admin Password" required>
 
             <button type="submit">Login as Admin</button>
-
         </form>
 
-        <p id="loginMessage" class="message"></p>
+        <p id="loginMessage" class="message" role="status"></p>
     </section>
 
+    <main id="dashboardSection" hidden>
+
+        <section class="panel">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Welcome, Admin</h2>
+                    <p class="hint">Manage student access and learning resources.</p>
+                </div>
+
+                <button id="logoutButton" class="secondary-button">Logout</button>
+            </div>
+
+            <hr>
+
+            <div class="section-heading">
+                <h2>Registered Students</h2>
+                <button id="refreshButton">Refresh Student List</button>
+            </div>
+
+            <p id="dashboardMessage" class="message" role="status"></p>
+            <div id="studentList"></div>
+
+            <hr>
+
+            <h2>Manage Learning Resources</h2>
+            <p class="hint">Add learning material and organise it by class, category and chapter.</p>
+
+            <form id="resourceForm">
+
+                <input type="hidden" id="resourceId">
+
+                <div class="form-grid">
+
+                    <div>
+                        <label for="targetClass">Select Class</label>
+                        <select id="targetClass" required>
+                            <option value="">Choose Class</option>
+                            <option value="6">Class 6</option>
+                            <option value="7">Class 7</option>
+                            <option value="8">Class 8</option>
+                            <option value="9">Class 9</option>
+                            <option value="10">Class 10</option>
+                            <option value="11">Class 11</option>
+                            <option value="12">Class 12</option>
+                            <option value="all">All Classes</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="resourceCategory">Learning Category</label>
+                        <select id="resourceCategory" required>
+                            <option value="">Choose Category</option>
+                            <option>Class Notes</option>
+                            <option>Practice Worksheets</option>
+                            <option>Tests and Assignments</option>
+                            <option>Previous Year Papers</option>
+                            <option>Video Lectures</option>
+                            <option>Formula and Revision Bank</option>
+                            <option>Olympiad and Advanced Mathematics</option>
+                            <option>Problem Lab</option>
+                            <option>Exam Strategy and Preparation</option>
+                            <option>Mathematics in Real Life</option>
+                            <option>Mathematical History</option>
+                            <option>Interactive Mathematics</option>
+                            <option>Mathematics Dictionary</option>
+                            <option>Other Resources</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="resourceTitle">Resource Title</label>
+                        <input type="text" id="resourceTitle"
+                               placeholder="Example: Class 10 Trigonometry Worksheet" required>
+                    </div>
+
+                    <div>
+                        <label for="resourceChapter">Chapter / Topic</label>
+                        <input type="text" id="resourceChapter"
+                               placeholder="Example: Introduction to Trigonometry">
+                    </div>
+
+                    <div>
+                        <label for="resourceType">Resource Format</label>
+                        <select id="resourceType" required>
+                            <option value="">Choose Format</option>
+                            <option value="PDF">PDF</option>
+                            <option value="Video">Video</option>
+                            <option value="Link">External Link</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="resourceDifficulty">Difficulty Level</label>
+                        <select id="resourceDifficulty">
+                            <option value="">Not specified</option>
+                            <option value="Basic">Basic</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
 
-    <!-- ADMIN DASHBOARD -->
+                    <div class="full-width">
+                        <label for="resourceDescription">Short Description (optional)</label>
+                        <textarea id="resourceDescription"
+                                  placeholder="Briefly explain what students will learn or practise."></textarea>
+                    </div>
 
-    <section id="dashboardSection" hidden>
+                    <div class="full-width">
+                        <label for="resourceUrl">Resource Link</label>
+                        <input type="url" id="resourceUrl"
+                               placeholder="Paste Google Drive, iCloud or YouTube link" required>
+                        <p class="hint">For Google Drive PDFs, ensure the sharing permission allows intended students to view the file.</p>
+                    </div>
 
-        <h2>Welcome, Admin</h2>
+                </div>
 
-        <button id="logoutButton">Logout</button>
+                <button type="submit" id="saveResourceButton">Add Resource</button>
+                <button type="button" id="cancelEditButton" class="secondary-button" hidden>Cancel Edit</button>
 
-        <hr>
+            </form>
 
-        <!-- STUDENT MANAGEMENT -->
+            <p id="resourceMessage" class="message" role="status"></p>
 
-        <h2>Registered Students</h2>
+            <hr>
 
-        <button id="refreshButton">Refresh Student List</button>
+            <div class="section-heading">
+                <h2>Existing Learning Resources</h2>
+                <button id="refreshResourcesButton">Refresh Materials</button>
+            </div>
 
-        <p id="dashboardMessage" class="message"></p>
+            <div id="resourceList"></div>
 
-        <div id="studentList"></div>
+        </section>
+    </main>
+</div>
 
-        <hr>
+<script type="module">
 
-        <!-- STUDY MATERIAL MANAGEMENT -->
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
 
-        <h2>Manage Study Materials</h2>
+    import {
+        getAuth,
+        signInWithEmailAndPassword,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
 
-        <p>Add PDFs, YouTube lessons or other learning resources for students.</p>
+    import {
+        getFirestore,
+        collection,
+        getDocs,
+        doc,
+        updateDoc,
+        addDoc,
+        deleteDoc,
+        serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
-        <form id="resourceForm">
 
-            <input type="hidden" id="resourceId">
+    const firebaseConfig = {
+        apiKey: "AIzaSyB-iHtuA_hME0_uxezZij-_yeWPdi_kD04",
+        authDomain: "pandey-mathematics-classes.firebaseapp.com",
+        projectId: "pandey-mathematics-classes",
+        storageBucket: "pandey-mathematics-classes.firebasestorage.app",
+        messagingSenderId: "523762241856",
+        appId: "1:523762241856:web:4402efc76a1f8463c66aa5"
+    };
 
-            <label for="targetClass"><strong>Select Class:</strong></label>
 
-            <select id="targetClass" required>
-                <option value="">Choose Class</option>
-                <option value="6">Class 6</option>
-                <option value="7">Class 7</option>
-                <option value="8">Class 8</option>
-                <option value="9">Class 9</option>
-                <option value="10">Class 10</option>
-                <option value="11">Class 11</option>
-                <option value="12">Class 12</option>
-                <option value="all">All Classes</option>
-            </select>
+    const ADMIN_UID = "6Z7MBdLK3HT4HDlXGiCXmQFron42";
 
-            <br>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-            <label for="resourceTitle"><strong>Resource Title:</strong></label>
+    const $ = (id) => document.getElementById(id);
 
-            <input type="text" id="resourceTitle"
-                   placeholder="Example: Class 10 Mathematics Notes"
-                   required>
 
-            <br>
+    const loginSection = $("loginSection");
+    const dashboardSection = $("dashboardSection");
 
-            <label for="resourceType"><strong>Resource Type:</strong></label>
+    const loginMessage = $("loginMessage");
+    const dashboardMessage = $("dashboardMessage");
 
-            <select id="resourceType" required>
-                <option value="">Choose Type</option>
-                <option value="PDF">PDF</option>
-                <option value="Video">Video</option>
-            </select>
+    const studentList = $("studentList");
+    const resourceList = $("resourceList");
+    const resourceMessage = $("resourceMessage");
 
-            <br>
+    const resourceForm = $("resourceForm");
 
-            <label for="resourceUrl"><strong>Resource Link:</strong></label>
 
-            <input type="url" id="resourceUrl"
-                   placeholder="Paste Google Drive, iCloud or YouTube link"
-                   required>
+    // ADMIN LOGIN
 
-            <br>
+    $("adminLoginForm").addEventListener("submit", async (event) => {
 
-            <button type="submit" id="saveResourceButton">
-                Add Resource
-            </button>
+        event.preventDefault();
 
-            <button type="button" id="cancelEditButton" hidden>
-                Cancel Edit
-            </button>
+        const email = $("adminEmail").value.trim();
+        const password = $("adminPassword").value;
 
-        </form>
+        try {
 
-        <p id="resourceMessage" class="message"></p>
+            loginMessage.textContent = "Checking admin account...";
 
-        <hr>
+            const result = await signInWithEmailAndPassword(auth, email, password);
 
-        <h3>Existing Study Materials</h3>
+            if (result.user.uid !== ADMIN_UID) {
 
-        <button id="refreshResourcesButton">
-            Refresh Materials
-        </button>
-
-        <div id="resourceList"></div>
-
-    </section>
-
-
-    <!-- FIREBASE -->
-
-    <script type="module">
-
-        import {
-            initializeApp
-        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-
-        import {
-            getAuth,
-            signInWithEmailAndPassword,
-            signOut
-        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
-
-        import {
-            getFirestore,
-            collection,
-            getDocs,
-            doc,
-            updateDoc,
-            addDoc,
-            deleteDoc,
-            serverTimestamp
-        } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
-
-
-        // FIREBASE CONFIGURATION
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyB-iHtuA_hME0_uxezZij-_yeWPdi_kD04",
-            authDomain: "pandey-mathematics-classes.firebaseapp.com",
-            projectId: "pandey-mathematics-classes",
-            storageBucket: "pandey-mathematics-classes.firebasestorage.app",
-            messagingSenderId: "523762241856",
-            appId: "1:523762241856:web:4402efc76a1f8463c66aa5"
-        };
-
-        const ADMIN_UID = "6Z7MBdLK3HT4HDlXGiCXmQFron42";
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-
-        // HTML ELEMENTS
-
-        const loginSection = document.getElementById("loginSection");
-        const dashboardSection = document.getElementById("dashboardSection");
-
-        const loginMessage = document.getElementById("loginMessage");
-        const dashboardMessage = document.getElementById("dashboardMessage");
-
-        const studentList = document.getElementById("studentList");
-        const resourceList = document.getElementById("resourceList");
-        const resourceMessage = document.getElementById("resourceMessage");
-
-        const resourceForm = document.getElementById("resourceForm");
-
-
-        // ADMIN LOGIN
-
-        document.getElementById("adminLoginForm").addEventListener("submit", async (e) => {
-
-            e.preventDefault();
-
-            const email = document.getElementById("adminEmail").value.trim();
-            const password = document.getElementById("adminPassword").value;
-
-            try {
-
-                loginMessage.textContent = "Checking admin account...";
-
-                const result = await signInWithEmailAndPassword(
-                    auth, email, password
-                );
-
-                if (result.user.uid !== ADMIN_UID) {
-
-                    await signOut(auth);
-
-                    loginMessage.textContent =
-                        "Access denied. This account is not an administrator.";
-
-                    return;
-                }
-
-                loginSection.hidden = true;
-                dashboardSection.hidden = false;
-
-                document.getElementById("adminLoginForm").reset();
-
-                await loadStudents();
-                await loadResources();
-
-            } catch (error) {
-
-                console.error(error);
+                await signOut(auth);
 
                 loginMessage.textContent =
-                    "Login failed. Please check your email and password.";
-
-            }
-
-        });
-
-
-        // LOAD STUDENT RECORDS
-
-        async function loadStudents() {
-
-            studentList.replaceChildren();
-
-            dashboardMessage.textContent = "Loading students...";
-
-            try {
-
-                const snapshot = await getDocs(collection(db, "students"));
-
-                if (snapshot.empty) {
-
-                    dashboardMessage.textContent =
-                        "No students registered yet.";
-
-                    return;
-                }
-
-                dashboardMessage.textContent =
-                    "Total registered students: " + snapshot.size;
-
-                snapshot.forEach((studentDoc) => {
-
-                    const student = studentDoc.data();
-
-                    const card = document.createElement("div");
-                    card.className = "student-card";
-
-                    const name = document.createElement("h3");
-                    name.textContent = student.name || "Name not available";
-
-                    const email = document.createElement("p");
-                    email.textContent = "Email: " + (student.email || "");
-
-                    const studentClass = document.createElement("p");
-                    studentClass.textContent =
-                        "Class: " + (student.class || "");
-
-                    const status = document.createElement("p");
-                    status.textContent =
-                        "Status: " + (student.status || "Unknown");
-
-                    card.append(name, email, studentClass, status);
-
-                    if (student.status === "pending") {
-
-                        const approveButton = document.createElement("button");
-                        approveButton.textContent = "Approve";
-
-                        approveButton.addEventListener("click", async () => {
-                            await changeStatus(studentDoc.id, "approved");
-                        });
-
-                        const rejectButton = document.createElement("button");
-                        rejectButton.textContent = "Reject";
-
-                        rejectButton.style.background = "#b42318";
-
-                        rejectButton.addEventListener("click", async () => {
-                            await changeStatus(studentDoc.id, "rejected");
-                        });
-
-                        card.append(approveButton, rejectButton);
-
-                    }
-
-                    studentList.appendChild(card);
-
-                });
-
-            } catch (error) {
-
-                console.error(error);
-
-                dashboardMessage.textContent =
-                    "Unable to load students. Please check admin access.";
-
-            }
-
-        }
-
-
-        // APPROVE OR REJECT STUDENT
-
-        async function changeStatus(studentId, newStatus) {
-
-            try {
-
-                await updateDoc(doc(db, "students", studentId), {
-                    status: newStatus
-                });
-
-                dashboardMessage.textContent =
-                    "Student status updated successfully.";
-
-                await loadStudents();
-
-            } catch (error) {
-
-                console.error(error);
-
-                dashboardMessage.textContent =
-                    "Could not update student status.";
-
-            }
-
-        }
-
-
-        // ADD OR UPDATE STUDY MATERIAL
-
-        resourceForm.addEventListener("submit", async (e) => {
-
-            e.preventDefault();
-
-            const resourceId =
-                document.getElementById("resourceId").value;
-
-            const targetClass =
-                document.getElementById("targetClass").value;
-
-            const title =
-                document.getElementById("resourceTitle").value.trim();
-
-            const type =
-                document.getElementById("resourceType").value;
-
-            const url =
-                document.getElementById("resourceUrl").value.trim();
-
-            if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
-
-                resourceMessage.textContent =
-                    "Admin login required.";
+                    "Access denied. This account is not an administrator.";
 
                 return;
             }
 
-            const resourceData = {
-                title: title,
-                type: type,
-                url: url,
-                targetClass: targetClass
-            };
+            loginSection.hidden = true;
+            dashboardSection.hidden = false;
 
-            try {
+            $("adminLoginForm").reset();
 
-                resourceMessage.textContent = "Saving resource...";
+            await Promise.all([
+                loadStudents(),
+                loadResources()
+            ]);
 
-                if (resourceId) {
+        } catch (error) {
 
-                    await updateDoc(
-                        doc(db, "resources", resourceId),
-                        resourceData
-                    );
+            console.error(error);
 
-                    resourceMessage.textContent =
-                        "Resource updated successfully.";
+            loginMessage.textContent =
+                "Login failed. Please check your email and password.";
+        }
 
-                } else {
+    });
 
-                    await addDoc(collection(db, "resources"), {
-                        ...resourceData,
-                        createdAt: serverTimestamp()
+
+    // LOAD STUDENTS
+
+    async function loadStudents() {
+
+        studentList.replaceChildren();
+
+        dashboardMessage.textContent = "Loading students...";
+
+        try {
+
+            const snapshot = await getDocs(collection(db, "students"));
+
+            if (snapshot.empty) {
+
+                dashboardMessage.textContent =
+                    "No students registered yet.";
+
+                return;
+            }
+
+            dashboardMessage.textContent =
+                "Total registered students: " + snapshot.size;
+
+
+            snapshot.forEach((studentDoc) => {
+
+                const student = studentDoc.data();
+
+                const card = document.createElement("div");
+                card.className = "student-card";
+
+                const name = document.createElement("h3");
+                name.textContent = student.name || "Name not available";
+
+                const email = document.createElement("p");
+                email.textContent = "Email: " + (student.email || "");
+
+                const studentClass = document.createElement("p");
+                studentClass.textContent = "Class: " + (student.class || "");
+
+                const status = document.createElement("p");
+                status.textContent = "Status: " + (student.status || "Unknown");
+
+                card.append(name, email, studentClass, status);
+
+
+                if (student.status === "pending") {
+
+                    const approveButton = document.createElement("button");
+                    approveButton.textContent = "Approve";
+
+                    approveButton.addEventListener("click", () => {
+                        changeStatus(studentDoc.id, "approved");
                     });
 
-                    resourceMessage.textContent =
-                        "New resource added successfully.";
 
+                    const rejectButton = document.createElement("button");
+                    rejectButton.textContent = "Reject";
+                    rejectButton.className = "delete-button";
+
+                    rejectButton.addEventListener("click", () => {
+                        changeStatus(studentDoc.id, "rejected");
+                    });
+
+                    card.append(approveButton, rejectButton);
                 }
 
-                resetResourceForm();
+                studentList.appendChild(card);
 
-                await loadResources();
+            });
 
-            } catch (error) {
+        } catch (error) {
 
-                console.error(error);
+            console.error(error);
+
+            dashboardMessage.textContent =
+                "Unable to load students. Please check admin access.";
+        }
+
+    }
+
+
+    // APPROVE / REJECT STUDENT
+
+    async function changeStatus(studentId, newStatus) {
+
+        try {
+
+            await updateDoc(
+                doc(db, "students", studentId),
+                { status: newStatus }
+            );
+
+            dashboardMessage.textContent =
+                "Student status updated successfully.";
+
+            await loadStudents();
+
+        } catch (error) {
+
+            console.error(error);
+
+            dashboardMessage.textContent =
+                "Could not update student status.";
+        }
+
+    }
+
+
+    // COLLECT RESOURCE FORM DATA
+
+    function getResourceFormData() {
+
+        return {
+
+            title: $("resourceTitle").value.trim(),
+
+            type: $("resourceType").value,
+
+            url: $("resourceUrl").value.trim(),
+
+            targetClass: $("targetClass").value,
+
+            category: $("resourceCategory").value,
+
+            chapter: $("resourceChapter").value.trim(),
+
+            difficulty: $("resourceDifficulty").value,
+
+            description: $("resourceDescription").value.trim()
+
+        };
+
+    }
+
+
+    // ADD OR UPDATE RESOURCE
+
+    resourceForm.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const resourceId = $("resourceId").value;
+
+        const resourceData = getResourceFormData();
+
+
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+
+            resourceMessage.textContent = "Admin login required.";
+
+            return;
+        }
+
+
+        try {
+
+            $("saveResourceButton").disabled = true;
+
+            resourceMessage.textContent = "Saving resource...";
+
+
+            if (resourceId) {
+
+                await updateDoc(
+                    doc(db, "resources", resourceId),
+                    resourceData
+                );
 
                 resourceMessage.textContent =
-                    "Unable to save resource. Please check Firestore rules and try again.";
+                    "Resource updated successfully.";
+
+            } else {
+
+                await addDoc(
+                    collection(db, "resources"),
+                    {
+                        ...resourceData,
+                        createdAt: serverTimestamp()
+                    }
+                );
+
+                resourceMessage.textContent =
+                    "New resource added successfully.";
 
             }
 
-        });
+
+            resetResourceForm();
+
+            await loadResources();
 
 
-        // LOAD EXISTING STUDY MATERIALS
+        } catch (error) {
 
-        async function loadResources() {
+            console.error(error);
 
-            resourceList.replaceChildren();
+            resourceMessage.textContent =
+                "Unable to save resource. Please check Firestore rules and try again.";
 
-            resourceMessage.textContent = "Loading study materials...";
+        } finally {
 
-            try {
+            $("saveResourceButton").disabled = false;
 
-                const snapshot = await getDocs(collection(db, "resources"));
+        }
 
-                if (snapshot.empty) {
+    });
 
-                    resourceMessage.textContent =
-                        "No study materials added yet.";
 
-                    return;
-                }
+    // LOAD EXISTING RESOURCES
+
+    async function loadResources() {
+
+        resourceList.replaceChildren();
+
+        resourceMessage.textContent = "Loading study materials...";
+
+
+        try {
+
+            const snapshot = await getDocs(collection(db, "resources"));
+
+
+            if (snapshot.empty) {
 
                 resourceMessage.textContent =
-                    "Total resources: " + snapshot.size;
+                    "No study materials added yet.";
 
-                snapshot.forEach((resourceDoc) => {
+                return;
+            }
 
-                    const resource = resourceDoc.data();
 
-                    const card = document.createElement("div");
-                    card.className = "resource-card";
+            resourceMessage.textContent =
+                "Total resources: " + snapshot.size;
 
-                    const title = document.createElement("h3");
-                    title.textContent = resource.title || "Untitled resource";
 
-                    const details = document.createElement("p");
-                    details.textContent =
-                        "Class: " + (resource.targetClass === "all"
-                            ? "All Classes"
-                            : resource.targetClass)
-                        + " | Type: " + (resource.type || "");
+            snapshot.forEach((resourceDoc) => {
 
-                    const link = document.createElement("a");
-                    link.href = resource.url || "#";
-                    link.textContent = "Open Resource";
-                    link.target = "_blank";
-                    link.rel = "noopener noreferrer";
+                const resource = resourceDoc.data();
 
-                    card.append(title, details, link);
+                const card = document.createElement("div");
+                card.className = "resource-card";
 
-                    // EDIT BUTTON
 
-                    const editButton = document.createElement("button");
-                    editButton.textContent = "Edit";
-                    editButton.className = "edit-button";
+                const title = document.createElement("h3");
 
-                    editButton.addEventListener("click", () => {
+                title.textContent =
+                    resource.title || "Untitled resource";
 
-                        document.getElementById("resourceId").value =
-                            resourceDoc.id;
 
-                        document.getElementById("targetClass").value =
-                            resource.targetClass || "";
+                const details = document.createElement("p");
 
-                        document.getElementById("resourceTitle").value =
-                            resource.title || "";
+                details.className = "resource-meta";
 
-                        document.getElementById("resourceType").value =
-                            resource.type || "";
 
-                        document.getElementById("resourceUrl").value =
-                            resource.url || "";
+                const className =
+                    resource.targetClass === "all"
+                        ? "All Classes"
+                        : (resource.targetClass || "Not set");
 
-                        document.getElementById("saveResourceButton").textContent =
-                            "Update Resource";
 
-                        document.getElementById("cancelEditButton").hidden =
-                            false;
+                details.textContent =
 
-                        resourceMessage.textContent =
-                            "Editing: " + (resource.title || "Resource");
+                    "Class: " + className +
 
-                        resourceForm.scrollIntoView({
-                            behavior: "smooth"
-                        });
+                    " · Format: " + (resource.type || "Not set") +
 
+                    " · Category: " + (resource.category || "Other Resources") +
+
+                    (resource.chapter
+                        ? " · Chapter: " + resource.chapter
+                        : "") +
+
+                    (resource.difficulty
+                        ? " · Difficulty: " + resource.difficulty
+                        : "");
+
+
+                const description = document.createElement("p");
+
+                description.textContent =
+                    resource.description || "";
+
+
+                const link = document.createElement("a");
+
+                link.href = resource.url || "#";
+                link.textContent = "Open Resource";
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+
+
+                card.append(title, details);
+
+                if (resource.description) {
+                    card.appendChild(description);
+                }
+
+                card.appendChild(link);
+
+
+                // EDIT BUTTON
+
+                const editButton = document.createElement("button");
+
+                editButton.textContent = "Edit";
+                editButton.className = "edit-button";
+
+
+                editButton.addEventListener("click", () => {
+
+                    $("resourceId").value = resourceDoc.id;
+
+                    $("targetClass").value = resource.targetClass || "";
+
+                    $("resourceTitle").value = resource.title || "";
+
+                    $("resourceType").value = resource.type || "";
+
+                    $("resourceUrl").value = resource.url || "";
+
+                    $("resourceCategory").value =
+                        resource.category || "Other Resources";
+
+                    $("resourceChapter").value =
+                        resource.chapter || "";
+
+                    $("resourceDifficulty").value =
+                        resource.difficulty || "";
+
+                    $("resourceDescription").value =
+                        resource.description || "";
+
+
+                    $("saveResourceButton").textContent =
+                        "Update Resource";
+
+                    $("cancelEditButton").hidden = false;
+
+                    resourceMessage.textContent =
+                        "Editing: " + (resource.title || "Resource");
+
+                    resourceForm.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
                     });
-
-
-                    // DELETE BUTTON
-
-                    const deleteButton = document.createElement("button");
-                    deleteButton.textContent = "Delete";
-                    deleteButton.className = "delete-button";
-
-                    deleteButton.addEventListener("click", async () => {
-
-                        const confirmed = confirm(
-                            "Are you sure you want to delete this resource?"
-                        );
-
-                        if (!confirmed) {
-                            return;
-                        }
-
-                        try {
-
-                            await deleteDoc(
-                                doc(db, "resources", resourceDoc.id)
-                            );
-
-                            resourceMessage.textContent =
-                                "Resource deleted successfully.";
-
-                            if (
-                                document.getElementById("resourceId").value
-                                === resourceDoc.id
-                            ) {
-                                resetResourceForm();
-                            }
-
-                            await loadResources();
-
-                        } catch (error) {
-
-                            console.error(error);
-
-                            resourceMessage.textContent =
-                                "Unable to delete resource.";
-
-                        }
-
-                    });
-
-                    card.append(editButton, deleteButton);
-
-                    resourceList.appendChild(card);
 
                 });
 
-            } catch (error) {
 
-                console.error(error);
+                // DELETE BUTTON
 
-                resourceMessage.textContent =
-                    "Unable to load resources. Please check your admin access.";
+                const deleteButton = document.createElement("button");
 
-            }
-
-        }
+                deleteButton.textContent = "Delete";
+                deleteButton.className = "delete-button";
 
 
-        // RESET RESOURCE FORM
+                deleteButton.addEventListener("click", async () => {
 
-        function resetResourceForm() {
+                    if (!confirm("Are you sure you want to delete this resource?")) {
+                        return;
+                    }
 
-            resourceForm.reset();
+                    try {
 
-            document.getElementById("resourceId").value = "";
+                        await deleteDoc(
+                            doc(db, "resources", resourceDoc.id)
+                        );
 
-            document.getElementById("saveResourceButton").textContent =
-                "Add Resource";
+                        resourceMessage.textContent =
+                            "Resource deleted successfully.";
 
-            document.getElementById("cancelEditButton").hidden = true;
+                        if ($("resourceId").value === resourceDoc.id) {
+                            resetResourceForm();
+                        }
 
-        }
+                        await loadResources();
 
+                    } catch (error) {
 
-        // CANCEL EDITING
+                        console.error(error);
 
-        document.getElementById("cancelEditButton")
-            .addEventListener("click", () => {
+                        resourceMessage.textContent =
+                            "Unable to delete resource.";
 
-                resetResourceForm();
+                    }
 
-                resourceMessage.textContent = "Editing cancelled.";
-
-            });
-
-
-        // REFRESH BUTTONS
-
-        document.getElementById("refreshButton")
-            .addEventListener("click", loadStudents);
-
-        document.getElementById("refreshResourcesButton")
-            .addEventListener("click", loadResources);
+                });
 
 
-        // ADMIN LOGOUT
+                card.append(editButton, deleteButton);
 
-        document.getElementById("logoutButton")
-            .addEventListener("click", async () => {
-
-                await signOut(auth);
-
-                dashboardSection.hidden = true;
-                loginSection.hidden = false;
-
-                studentList.replaceChildren();
-                resourceList.replaceChildren();
-
-                dashboardMessage.textContent = "";
-                resourceMessage.textContent = "";
-
-                resetResourceForm();
-
-                loginMessage.textContent = "You have logged out.";
+                resourceList.appendChild(card);
 
             });
 
-    </script>
+
+        } catch (error) {
+
+            console.error(error);
+
+            resourceMessage.textContent =
+                "Unable to load resources. Please check your admin access.";
+
+        }
+
+    }
+
+
+    // RESET RESOURCE FORM
+
+    function resetResourceForm() {
+
+        resourceForm.reset();
+
+        $("resourceId").value = "";
+
+        $("saveResourceButton").textContent = "Add Resource";
+
+        $("cancelEditButton").hidden = true;
+
+    }
+
+
+    // CANCEL EDIT
+
+    $("cancelEditButton").addEventListener("click", () => {
+
+        resetResourceForm();
+
+        resourceMessage.textContent = "Editing cancelled.";
+
+    });
+
+
+    // REFRESH BUTTONS
+
+    $("refreshButton").addEventListener("click", loadStudents);
+
+    $("refreshResourcesButton").addEventListener("click", loadResources);
+
+
+    // LOGOUT
+
+    $("logoutButton").addEventListener("click", async () => {
+
+        await signOut(auth);
+
+        dashboardSection.hidden = true;
+
+        loginSection.hidden = false;
+
+        studentList.replaceChildren();
+
+        resourceList.replaceChildren();
+
+        dashboardMessage.textContent = "";
+
+        resourceMessage.textContent = "";
+
+        resetResourceForm();
+
+        loginMessage.textContent = "You have logged out.";
+
+    });
+
+</script>
 
 </body>
 </html>
